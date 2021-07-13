@@ -10,6 +10,7 @@
 #include "freertos/event_groups.h"
 
 #define INITIAL_DATA "Undefined"
+#define USE_COAP "Use CoAP"
 
 #define MAX_LEN_ROOM_NAME 30
 #define MAX_LEN_CTRL_NAME 10

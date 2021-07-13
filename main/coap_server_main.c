@@ -399,6 +399,7 @@ void nvs_storage_daemon(void *arg)
             default :
                 ESP_LOGI(TAG, "Error (%s) reading!\n", esp_err_to_name(err));
         }
+        ESP_ERROR_CHECK( mdns_service_txt_item_set("_http", "_tcp", ENDPOINT_STRING[mode], MODE_STRING[ctrl_mode]) );
 
         /* Read Settings */
         // Read and check required size
@@ -445,6 +446,7 @@ void nvs_storage_daemon(void *arg)
             case ESP_OK:
                 ESP_LOGI(TAG, "Read room name successfuly\n");
                 ESP_LOGI(TAG, "room: %s",room_name);
+                ESP_ERROR_CHECK( mdns_service_txt_item_set("_http", "_tcp", ENDPOINT_STRING[room], room_name) );
                 break;
             case ESP_ERR_NVS_NOT_FOUND:
                 ESP_LOGI(TAG, "The room name value is not initialized yet!\n");
