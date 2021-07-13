@@ -99,6 +99,11 @@ fetches `/.well-known/core`
 
 * CoAP logging can be enabled by running 'idf.py menuconfig -> Component config -> CoAP Configuration' and setting appropriate log level
 
+* You can debug the microphone input by changing ``DEBUG_MIC_INPUT`` to 1
+
 ## TODO
 * Complete README
 * Decide License
+* Schematics
+* Video
+* Link to app
