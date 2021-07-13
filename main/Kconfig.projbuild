@@ -1,0 +1,40 @@
+menu "Algorythm Project Configuration"
+
+    config EXAMPLE_COAP_PSK_KEY
+        string "Preshared Key (PSK) to use in the connection from the CoAP client"
+        depends on COAP_MBEDTLS_PSK
+        default "secret-key"
+        help
+            The Preshared Key to use to encrypt the communicatons. The same key must be
+            used at both ends of the CoAP connection, and the CoaP client must request
+            an URI prefixed with coaps:// instead of coap:// for DTLS to be used.
+    config ESP_WIFI_SSID
+        string "WiFi SSID"
+        default "myssid"
+        help
+            SSID (network name) for the example to connect to.
+
+    config ESP_WIFI_PASS
+        string "WiFi Password"
+        default "mypassword"
+        help
+            WiFi password (WPA or WPA2) for the example to use.
+
+    config ESP_MAXIMUM_RETRY
+        int "Maximum retry"
+        default 5
+        help
+            Set the Maximum retry to avoid station reconnecting to the AP unlimited when the AP is really inexistent.
+        
+    config LEDS_MDNS_HOSTNAME
+        string "mDNS hostname"
+        default "LEDSHOST"
+        help
+            The hostname to use with mDNS.
+
+    config LEDS_MDNS_INSTANCE
+        string "mDNS instance name"
+        default "LEDSINSTANCEMDNS"
+        help
+            The instance name to use with mDNS.
+endmenu
