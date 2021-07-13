@@ -1,6 +1,3 @@
 [submodule "components/fft-c"]
 	path = components/fft-c
 	url = https://github.com/adis300/fft-c.git
-[submodule "fft-c"]
-	path = fft-c
-	url = https://github.com/adis300/fft-c.git
