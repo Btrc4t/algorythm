@@ -31,6 +31,7 @@
 #include "esp_netif.h"
 
 #include "netdb.h"
+#include "mdns.h"
 
 #include "lwip/err.h"
 #include "lwip/sys.h"
@@ -45,8 +46,6 @@
 #include "rgb_leds.h"
 
 #include "fft.h"
-
-// #define INITIAL_DATA "Undefined"
 
 #define CORE_0 (BaseType_t)(0)
 #define CORE_1 (BaseType_t)(1)
@@ -399,6 +398,7 @@ void nvs_storage_daemon(void *arg)
             default :
                 ESP_LOGI(TAG, "Error (%s) reading!\n", esp_err_to_name(err));
         }
+        ESP_ERROR_CHECK( mdns_service_txt_item_set("_http", "_tcp", ENDPOINT_STRING[mode], MODE_STRING[ctrl_mode]) );
 
         /* Read Settings */
         // Read and check required size
@@ -445,6 +445,7 @@ void nvs_storage_daemon(void *arg)
             case ESP_OK:
                 ESP_LOGI(TAG, "Read room name successfuly\n");
                 ESP_LOGI(TAG, "room: %s",room_name);
+                ESP_ERROR_CHECK( mdns_service_txt_item_set("_http", "_tcp", ENDPOINT_STRING[room], room_name) );
                 break;
             case ESP_ERR_NVS_NOT_FOUND:
                 ESP_LOGI(TAG, "The room name value is not initialized yet!\n");
@@ -535,9 +536,9 @@ void i2s_adc_audio_processing(void*arg)
 #endif
     short range = 0;
     int c, location_max = 0, location_min = 0;
-    FFTTransformer* transformer = create_fft_transformer((EXAMPLE_I2S_READ_LEN/2), FFT_SCALED_OUTPUT);
+    FFTTransformer * transformer = create_fft_transformer((EXAMPLE_I2S_READ_LEN/2), FFT_SCALED_OUTPUT);
     FFT_PRECISION * fft_input = (FFT_PRECISION *) malloc((EXAMPLE_I2S_READ_LEN/2)  * sizeof(FFT_PRECISION));
-    FFT_PRECISION *rgb_magnitudes;
+    FFT_PRECISION * rgb_magnitudes;
     // Task loop
     for (;;) {
         if (ctrl_mode == manual) {
@@ -620,8 +621,8 @@ void i2s_adc_audio_processing(void*arg)
         }
         
         if (ctrl_mode == audio || ctrl_mode == audio_intensity) {
-             range -= settings.settings_st.amp_min;
-            if(range < 0) range = 0;
+            range -= settings.settings_st.amp_min;
+            if (range < 0) range = 0;
 
             set_rgb(rgb_data[COLOR_R_IDX], rgb_data[COLOR_G_IDX], rgb_data[COLOR_B_IDX], 
                 range > settings.settings_st.amp_max ? 100 : (100*range/settings.settings_st.amp_max));

@@ -1,7 +1,7 @@
 
 # Algorythm
 
-IOT appliance based on the CoAP protocol with rgb leds reacting to sound input.
+ESP32 IOT appliance based on the CoAP protocol with rgb leds reacting to sound input.
 
 ### Configure the project
 
@@ -46,6 +46,22 @@ These are the CoAP endpoints that the server makes available for clients:
  * /mode (Fetch mode / set the device to function in one of multiple modes)
  * /prefs (Fetch configuration / set device configuration)
 
+ If you're using [npm](https://docs.npmjs.com/cli/v7/configuring-npm/install) there is a 
+command line tool which makes debugging CoAP easy: [coap-cli](https://www.npmjs.com/package/coap-cli)
+
+For example to change the room name using the CoAP endpoint:
+```
+$ echo -n 'desk' | coap put coap://10.0.0.120/room
+(2.04)
+```
+To ensure the endpoint stores the new value:
+```
+$ coap get coap://10.0.0.120/room
+(2.05)  desk
+```
+The IP ``10.0.0.120`` might not be the one your device was assigned, check the troubleshooting section below.
+
+
 NOTE: Client sessions trying to use coaps+tcp:// are not currently supported, even though both
 libcoap and MbedTLS support it.
 
@@ -60,6 +76,24 @@ Please refer to [RFC7252](https://www.rfc-editor.org/rfc/pdfrfc/rfc7252.txt.pdf)
 This can be found at https://libcoap.net/doc/reference/4.2.0/
 
 ## Troubleshooting
+* You should be able to find the IP of the esp32 board by watching the serial output with:
+```
+idf.py -p PORT monitor
+```
+* You can also find the IP of the esp32 board using dig:
+```
+$ dig @224.0.0.251 -p 5353 -t ptr +short _http._tcp.local
+LEDSINSTANCEMDNS._http._tcp.local.
+0 0 80 LEDSHOST-A0B000.local.
+"prefs=Undefined" "mode=Undefined" "rgb=Undefined" "room=Undefined"
+```
+
+```
+$ dig @224.0.0.251 -p 5353 +short LEDSHOST-A0B000.local
+10.0.0.120
+```
+
+
 * Please make sure CoAP client fetches or puts data under path: `/room` or
 fetches `/.well-known/core`
 
@@ -67,3 +101,4 @@ fetches `/.well-known/core`
 
 ## TODO
 * Complete README
+* Decide License

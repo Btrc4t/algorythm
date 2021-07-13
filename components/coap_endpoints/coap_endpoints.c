@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include "coap_endpoints.h"
 #include "mdns.h"
-#include "rgb_leds.h"
 #include "esp_log.h"
+#include "rgb_leds.h"
 
 #define MAX_LEN_ROOM_NAME 30
 #define MAX_LEN_CTRL_NAME 10
@@ -130,7 +130,7 @@ void hnd_espressif_put_room(coap_context_t *ctx,
         memcpy (room_name, data, maxlen);
         room_name[maxlen-1] = '\0';
         xEventGroupSetBits(endpoint_events,E_NAME_BIT);
-        ESP_ERROR_CHECK( mdns_service_txt_item_set("_http", "_tcp", "room", room_name) );
+        ESP_ERROR_CHECK( mdns_service_txt_item_set("_http", "_tcp", ENDPOINT_STRING[room], room_name) );
         //TODO also store in nvm and lookup on start
         ESP_LOGI(TAG, "Copied bytes: %d, data: %s",
                  maxlen, room_name);
@@ -147,6 +147,7 @@ void hnd_espressif_delete_room(coap_context_t *ctx,
 {
     coap_resource_notify_observers(resource, NULL);
     snprintf(room_name, strlen(room_name)+1, INITIAL_DATA);
+    ESP_ERROR_CHECK( mdns_service_txt_item_set("_http", "_tcp", ENDPOINT_STRING[room], INITIAL_DATA) );
     response->code = COAP_RESPONSE_CODE(202);
 }
 
@@ -305,7 +306,7 @@ void hnd_espressif_put_mode(coap_context_t *ctx,
         ctrl_mode = data[0];
         snprintf(ctrl_text, sizeof(MODE_STRING[data[0]]), MODE_STRING[data[0]]);
         xEventGroupSetBits(endpoint_events,E_MODE_BIT);
-        ESP_ERROR_CHECK( mdns_service_txt_item_set("_http", "_tcp", "mode", MODE_STRING[data[0]]) );
+        ESP_ERROR_CHECK( mdns_service_txt_item_set("_http", "_tcp", ENDPOINT_STRING[mode], MODE_STRING[data[0]]) );
     } else {
         ESP_LOGE(TAG, "Got unexpected size for mode:%d, data[0]:%d", size, data[0]);
     }
