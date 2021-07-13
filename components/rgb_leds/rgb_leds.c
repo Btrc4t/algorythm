@@ -15,7 +15,7 @@ void set_rgb(uint8_t red, uint8_t green, uint8_t blue, uint8_t intensity) {
     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, intensity*green/255);
     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_2, MCPWM_OPR_A, intensity*blue/255);
     // Update NVM
-    if (ctrl_mode == manual)
+    if (ctrl_mode == manual || ctrl_mode == audio_intensity)
         xEventGroupSetBits(endpoint_events,E_RGB_BIT);
 }
 
@@ -36,5 +36,6 @@ void mcpwm_gpio_init_config(void)
     mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_0, &pwm_config); 
     mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_1, &pwm_config);
     mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_2, &pwm_config);
-    if (ctrl_mode == manual) set_rgb(rgb_data[0], rgb_data[1], rgb_data[2], 100);
+    if (ctrl_mode == manual || ctrl_mode == audio_intensity) 
+        set_rgb(rgb_data[0], rgb_data[1], rgb_data[2], 100);
 }

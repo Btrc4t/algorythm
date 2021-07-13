@@ -113,8 +113,9 @@ fetches `/.well-known/core`
 * You can debug the microphone input by changing ``DEBUG_MIC_INPUT`` to 1
 
 ## TODO
+* Configurable SSID & SSID password after deployment
+* Configurable CoAP PSK after deployment
 * Complete README
-* Decide License
 * Setup CoAP DTLS only
 * Schematics
 * Video
