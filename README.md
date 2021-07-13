@@ -4,15 +4,17 @@
 ESP32 IOT appliance based on the CoAP protocol with rgb leds reacting to sound input.
 
 ## Installing
+![System Diagram](system_diagram.png "Algorythm System Diagram")
 ### Software Prerequisites
 
 * ESP-IDF environment: See the [Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/) for full steps to configure and use ESP-IDF to build projects.
 
 ### Hardware Prerequisites
-* If you're plugging this into a home socket, you will need an AC-DC converter.
-* 12V-5V DC-DC converter (to power the leds and the esp32).
+* If you're plugging this into a home socket, you will need an AC-DC 12V converter.
+* 12V-5V DC-DC converter (to power the esp32).
 * LED driver: See [this schematic](https://github.com/idumzaes/ESP-M3-3ch-LED-Controller-Schematics/blob/master/Schematic_ESP%203-ch%20LED%20Driver.pdf) for setting up a LED driver. Specifically look at the LED Out section of the schematic. From that section eliminate the 1K resistors, those aren't needed.
-* Microphone with amp: [Electret Microphone Amplifier - MAX9814 with Auto Gain Control](https://www.adafruit.com/product/1713) or similar
+* Microphone with amp: [Electret Microphone Amplifier - MAX9814 with Auto Gain Control](https://www.adafruit.com/product/1713) or similar. (Auto Gain not necessary)
+* 12V RGB Led band.
 
 ### Configure the project
 
@@ -113,6 +115,7 @@ fetches `/.well-known/core`
 ## TODO
 * Complete README
 * Decide License
+* Setup CoAP DTLS only
 * Schematics
 * Video
 * Link to app
