@@ -131,7 +131,6 @@ void hnd_espressif_put_room(coap_context_t *ctx,
         room_name[maxlen-1] = '\0';
         xEventGroupSetBits(endpoint_events,E_NAME_BIT);
         ESP_ERROR_CHECK( mdns_service_txt_item_set("_http", "_tcp", ENDPOINT_STRING[room], room_name) );
-        //TODO also store in nvm and lookup on start
         ESP_LOGI(TAG, "Copied bytes: %d, data: %s",
                  maxlen, room_name);
     }
@@ -174,20 +173,14 @@ void hnd_espressif_put_settings(coap_context_t *ctx,
 
     coap_resource_notify_observers(resource, NULL);
 
-    // if (strcmp (room_name, INITIAL_DATA) == 0) {
-    //     response->code = COAP_RESPONSE_CODE(201);
-    // } else {
-        response->code = COAP_RESPONSE_CODE(204);
-    // }
+    response->code = COAP_RESPONSE_CODE(204);
 
     /* coap_get_data() sets size to 0 on error */
     (void)coap_get_data(request, &size, &data);
     ESP_LOGI(TAG, "Got coap get request type:%d, code: %d, data: %s",
                  request->type, request->code, request->data);
 
-    if (ctrl_mode != manual) {
-        ESP_LOGE(TAG, "Cannot set RGB value when not in manual mode");
-    } else if (size == sizeof(settings.settings_data)) {
+    if (size == sizeof(settings.settings_data)) {
         memcpy (settings.settings_data, data, size);
         xEventGroupSetBits(endpoint_events, E_PREF_BIT);
     } else {
@@ -232,11 +225,7 @@ void hnd_espressif_put_rgb(coap_context_t *ctx,
 
     coap_resource_notify_observers(resource, NULL);
 
-    // if (strcmp (room_name, INITIAL_DATA) == 0) {
-    //     response->code = COAP_RESPONSE_CODE(201);
-    // } else {
-        response->code = COAP_RESPONSE_CODE(204);
-    // }
+    response->code = COAP_RESPONSE_CODE(204);
 
     /* coap_get_data() sets size to 0 on error */
     (void)coap_get_data(request, &size, &data);

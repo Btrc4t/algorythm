@@ -1,6 +1,5 @@
-/* CoAP RGB led band
-
-   TODO describe in more detail
+/* 
+   ESP32 IOT appliance based on the CoAP protocol with rgb leds reacting to sound input.
 */
 
 /*
@@ -506,7 +505,7 @@ void nvs_storage_daemon(void *arg)
  */
 void i2s_adc_audio_processing(void*arg)
 {
-     i2s_config_t i2s_config = {
+    i2s_config_t i2s_config = {
         .mode = I2S_MODE_MASTER | I2S_MODE_RX | I2S_MODE_ADC_BUILT_IN,
         .sample_rate =  EXAMPLE_I2S_SAMPLE_RATE,
         .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
@@ -516,11 +515,11 @@ void i2s_adc_audio_processing(void*arg)
         .dma_buf_count = 2,
         .dma_buf_len = (EXAMPLE_I2S_READ_LEN/2),
         .use_apll = 1,
-     };
-     // Install and start i2s driver
-     i2s_driver_install(I2S_NUM_0, &i2s_config, 0, NULL);
-     // Init ADC pad
-     i2s_set_adc_mode(I2S_ADC_UNIT, I2S_ADC_CHANNEL);
+    };
+    // Install and start i2s driver
+    i2s_driver_install(I2S_NUM_0, &i2s_config, 0, NULL);
+    // Init ADC pad
+    i2s_set_adc_mode(I2S_ADC_UNIT, I2S_ADC_CHANNEL);
 
     size_t bytes_read;
     int i2s_read_len = EXAMPLE_I2S_READ_LEN;
@@ -584,7 +583,7 @@ void i2s_adc_audio_processing(void*arg)
             mag_max = 0;
             mag_max_freq = 0;
 #endif
-            // Print output
+            // Process output
             for(int i = 0; i < (EXAMPLE_I2S_READ_LEN/2); i += 2) {
                 uint16_t freq = 16 * i / 2 * EXAMPLE_I2S_SAMPLE_RATE / EXAMPLE_I2S_READ_LEN;
                 FFT_PRECISION cos_comp = fft_input[i];
