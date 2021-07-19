@@ -34,7 +34,10 @@ menu "Algorythm Project Configuration"
 
     config LEDS_MDNS_INSTANCE
         string "mDNS instance name"
-        default "LEDSINSTANCEMDNS"
+        default "ALGORYTHM"
         help
-            The instance name to use with mDNS.
+            The instance / service name to use with mDNS. 
+            This will be used by the android application to identify 
+            nodes flashed with this project. Be ready to change the 
+            android application's code if you change this!
 endmenu

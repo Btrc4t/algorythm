@@ -27,7 +27,7 @@ Algorythm Project Configuration  --->
  * Set WiFi SSID under Example Configuration
  * Set WiFi Password under Example Configuration
  * Set the mDNS hostname for the board to use in the internal WiFi network
- * Set the mDNS instance name for the board to use in the internal WiFi network
+ * Set the mDNS instance name for the board to use in the internal WiFi network (this is best left as it is, the android application uses this string to identify nodes)
 
 Component config > CoAP Configuration  --->
   
