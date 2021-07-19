@@ -50,6 +50,7 @@ typedef enum endpoint_enum endpoint;
         MODE(audio_intensity)  \
         MODE(audio_freq)  \
         MODE(audio) \
+        MODE(off) \
         MODE(modes_size)  \
 
 enum modes_enum {
@@ -116,6 +117,8 @@ EventGroupHandle_t get_endpoints_event_group();
 void set_endpoints_handlers(__attribute__((unused)) handlers_t *handlers);
 
 void initialise_mdns(void);
+
+char* generate_hostname(void);
 
 void hnd_espressif_get_room(coap_context_t *ctx, coap_resource_t *resource,
                   coap_session_t *session,

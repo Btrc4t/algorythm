@@ -175,6 +175,9 @@ void wifi_init_sta(void)
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config) );
     ESP_ERROR_CHECK(esp_wifi_start() );
 
+    const char* hostname = generate_hostname();
+    ESP_ERROR_CHECK(tcpip_adapter_set_hostname(TCPIP_ADAPTER_IF_STA , hostname));
+
     ESP_LOGI(TAG, "wifi_init_sta finished.");
 
     /* Waiting until either the connection is established (WIFI_CONNECTED_BIT) or connection failed for the maximum
@@ -540,7 +543,7 @@ void i2s_adc_audio_processing(void*arg)
     FFT_PRECISION * rgb_magnitudes;
     // Task loop
     for (;;) {
-        if (ctrl_mode == manual) {
+        if (ctrl_mode == manual || ctrl_mode == off) {
             vTaskDelay(pdMS_TO_TICKS(1000));
             continue;
         }

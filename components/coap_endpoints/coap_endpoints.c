@@ -27,7 +27,7 @@ const char *ENDPOINT_STRING[] = {
 /** Generate host name based on sdkconfig, adding a portion of MAC address to it.
  *  @return host name string allocated from the heap
  */
-static char* generate_hostname(void)
+char* generate_hostname(void)
 {
     uint8_t mac[6];
     char   *hostname;
@@ -208,7 +208,7 @@ void hnd_espressif_get_rgb(coap_context_t *ctx, coap_resource_t *resource,
                   coap_string_t *query, coap_pdu_t *response)
 {
     coap_add_data_blocked_response(resource, session, request, response, token,
-                                   COAP_MEDIATYPE_TEXT_PLAIN, 0,
+                                   COAP_MEDIATYPE_APPLICATION_OCTET_STREAM, 0,
                                    sizeof(rgb_data),
                                    (const u_char *)rgb_data);
 }
@@ -261,10 +261,11 @@ void hnd_espressif_get_mode(coap_context_t *ctx, coap_resource_t *resource,
                   coap_pdu_t *request, coap_binary_t *token,
                   coap_string_t *query, coap_pdu_t *response)
 {
+    uint8_t *ctrl_mode_pointer = &ctrl_mode;
     coap_add_data_blocked_response(resource, session, request, response, token,
-                                   COAP_MEDIATYPE_TEXT_PLAIN, 0,
-                                   strlen(ctrl_text)+1,
-                                   (const u_char *)ctrl_text);
+                                   COAP_MEDIATYPE_APPLICATION_OCTET_STREAM, 0,
+                                   (size_t)1,
+                                   (const u_char *)ctrl_mode_pointer);
 }
 
 void hnd_espressif_put_mode(coap_context_t *ctx,
