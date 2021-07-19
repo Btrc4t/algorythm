@@ -261,11 +261,11 @@ void hnd_espressif_get_mode(coap_context_t *ctx, coap_resource_t *resource,
                   coap_pdu_t *request, coap_binary_t *token,
                   coap_string_t *query, coap_pdu_t *response)
 {
-    uint8_t *ctrl_mode_pointer = &ctrl_mode;
+    uint8_t ctrl_mode_value[] = {(uint8_t) ctrl_mode};
     coap_add_data_blocked_response(resource, session, request, response, token,
                                    COAP_MEDIATYPE_APPLICATION_OCTET_STREAM, 0,
                                    (size_t)1,
-                                   (const u_char *)ctrl_mode_pointer);
+                                   (const u_char *)ctrl_mode_value);
 }
 
 void hnd_espressif_put_mode(coap_context_t *ctx,
