@@ -232,8 +232,8 @@ void hnd_espressif_put_rgb(coap_context_t *ctx,
     ESP_LOGI(TAG, "Got coap get request type:%d, code: %d, data: %s",
                  request->type, request->code, request->data);
 
-    if (ctrl_mode != manual) {
-        ESP_LOGE(TAG, "Cannot set RGB value when not in manual mode");
+    if (ctrl_mode != manual && ctrl_mode != audio_intensity) {
+        ESP_LOGE(TAG, "Cannot set RGB value when not in manual or audio_intensity modes");
     } else if (size == sizeof(rgb_data)) {
         memcpy (rgb_data, data, size);
         set_rgb(rgb_data[COLOR_R_IDX], rgb_data[COLOR_G_IDX], rgb_data[COLOR_B_IDX], 100);
