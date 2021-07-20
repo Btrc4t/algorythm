@@ -297,6 +297,7 @@ void hnd_espressif_put_mode(coap_context_t *ctx,
         snprintf(ctrl_text, sizeof(MODE_STRING[data[0]]), MODE_STRING[data[0]]);
         xEventGroupSetBits(endpoint_events,E_MODE_BIT);
         ESP_ERROR_CHECK( mdns_service_txt_item_set("_http", "_tcp", ENDPOINT_STRING[mode], MODE_STRING[data[0]]) );
+        if (ctrl_mode == off) set_rgb(0, 0, 0, 0);
     } else {
         ESP_LOGE(TAG, "Got unexpected size for mode:%d, data[0]:%d", size, data[0]);
     }

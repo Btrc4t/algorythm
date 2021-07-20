@@ -34,6 +34,7 @@
 #define GREEN_FREQ_END  (1100)
 #define RED_FREQ_START  GREEN_FREQ_END
 #define RED_FREQ_END  (3500)
+#define HOLD_MODE_INTENSITY (45)
 
 typedef struct rgb_mode_storage
 {

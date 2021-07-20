@@ -5,17 +5,29 @@
 #include "freertos/event_groups.h"
 
 const static char *TAG = "RGB Leds";
+static uint8_t rgba_last[] = {0};
 
 void set_rgb(uint8_t red, uint8_t green, uint8_t blue, uint8_t intensity) {
-    if (intensity > 100) return;
-    rgb_data[0] = red;
-    rgb_data[1] = green;
-    rgb_data[2] = blue;    
+    if (intensity > 100) return; 
+    // avoid setting duty cycle in color hold mode if color didn't change
+    if (ctrl_mode == audio_hold) {
+        if (rgba_last[0] == red 
+        && rgba_last[1] == green 
+        && rgba_last[2] == blue 
+        && rgba_last[3] == intensity) {
+            return;
+        } else {
+            rgba_last[0] = red;
+            rgba_last[1] = green;
+            rgba_last[2] = blue;
+            rgba_last[3] = intensity;
+        }        
+    }
     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, intensity*red/255);
     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, intensity*green/255);
     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_2, MCPWM_OPR_A, intensity*blue/255);
     // Update NVM
-    if (ctrl_mode == manual || ctrl_mode == audio_intensity)
+    if (ctrl_mode == manual)
         xEventGroupSetBits(endpoint_events,E_RGB_BIT);
 }
 

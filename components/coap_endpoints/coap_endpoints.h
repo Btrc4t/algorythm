@@ -51,6 +51,7 @@ typedef enum endpoint_enum endpoint;
         MODE(audio_freq)  \
         MODE(audio) \
         MODE(off) \
+        MODE(audio_hold) \
         MODE(modes_size)  \
 
 enum modes_enum {
@@ -92,10 +93,11 @@ typedef struct settings_storage
   uint16_t freq_b_end;
   uint16_t freq_g_end;
   uint16_t freq_r_end;
+  uint16_t hold_mode_int;
 } settings_storage;
 
 typedef union settings_data_t {
-   uint8_t settings_data[12];
+   uint8_t settings_data[14];
    settings_storage settings_st;
 } settings_data_t;
 

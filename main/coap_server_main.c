@@ -427,6 +427,7 @@ void nvs_storage_daemon(void *arg)
                 settings.settings_st.freq_b_end = BLUE_FREQ_END;
                 settings.settings_st.freq_g_end = GREEN_FREQ_END;
                 settings.settings_st.freq_r_end = RED_FREQ_END;
+                settings.settings_st.hold_mode_int = HOLD_MODE_INTENSITY;
                 break;
             default :
                 ESP_LOGI(TAG, "Error (%s) reading!\n", esp_err_to_name(err));
@@ -545,13 +546,13 @@ void i2s_adc_audio_processing(void*arg)
     for (;;) {
         if (ctrl_mode == manual || ctrl_mode == off) {
             vTaskDelay(pdMS_TO_TICKS(1000));
+skip_it:    vTaskDelay(pdMS_TO_TICKS(10));
             continue;
         }
 #if DEBUG_MIC_INPUT
         ESP_LOGI(TAG,"Color mode %d", ctrl_mode);
         time_processing = esp_timer_get_time();
 #endif
-        rgb_magnitudes = (FFT_PRECISION*)calloc(3, sizeof(FFT_PRECISION));
         i2s_read(I2S_NUM_0, (void*) i2s_read_buff, i2s_read_len, &bytes_read, portMAX_DELAY);
         i2s_proc_buff = (uint16_t*) i2s_read_buff;
 
@@ -565,7 +566,24 @@ void i2s_adc_audio_processing(void*arg)
         }
 
         range = i2s_proc_buff[location_max] - i2s_proc_buff[location_min];
-        if ((range/16) == 0) continue;
+        
+        range -= settings.settings_st.amp_min;
+        if (range < 0) range = 0;
+
+        // hold the last color at a set intensity when amplitude is below treshold
+        if (range == 0 && ctrl_mode == audio_hold) { 
+            set_rgb(rgb_data[COLOR_R_IDX], rgb_data[COLOR_G_IDX], rgb_data[COLOR_B_IDX], settings.settings_st.hold_mode_int);
+            goto skip_it;
+        } else if (range == 0 && ctrl_mode != audio_freq) {
+            set_rgb(0, 0, 0, 0);
+            goto skip_it;
+        } else if (range > 0 && ctrl_mode == audio_intensity) {
+            set_rgb(rgb_data[COLOR_R_IDX], rgb_data[COLOR_G_IDX], rgb_data[COLOR_B_IDX], 
+                range > settings.settings_st.amp_max ? 100 : (100*range/settings.settings_st.amp_max));
+            goto skip_it;
+        }
+
+        if ((range/16) == 0) goto skip_it;
 
 #if DEBUG_MIC_INPUT
         printf("Max: buff[%04d] = %04d.\n", location_max+1, i2s_proc_buff[location_max]);
@@ -574,7 +592,8 @@ void i2s_adc_audio_processing(void*arg)
             ESP_LOGE(TAG, "Mic saturated");
         printf("Range: %d\n====\n", range);
 #endif
-        if (ctrl_mode == audio || ctrl_mode == audio_freq) {
+        if (ctrl_mode == audio || ctrl_mode == audio_freq || ctrl_mode == audio_hold) {
+            rgb_magnitudes = (FFT_PRECISION*)calloc(3, sizeof(FFT_PRECISION));
             for(int i = 0; i < (EXAMPLE_I2S_READ_LEN/2); i += 1) {
                 fft_input[i] = (i2s_proc_buff[i] - range) / (range/16);
             }
@@ -619,21 +638,17 @@ void i2s_adc_audio_processing(void*arg)
             rgb_data[COLOR_R_IDX] = (uint8_t)(255*rgb_magnitudes[COLOR_R_IDX]/rgb_magnitudes[location_max]);
             rgb_data[COLOR_G_IDX] = (uint8_t)(255*rgb_magnitudes[COLOR_G_IDX]/rgb_magnitudes[location_max]);
             rgb_data[COLOR_B_IDX] = (uint8_t)(255*rgb_magnitudes[COLOR_B_IDX]/rgb_magnitudes[location_max]);
-        
-        }
-        
-        if (ctrl_mode == audio || ctrl_mode == audio_intensity) {
-            range -= settings.settings_st.amp_min;
-            if (range < 0) range = 0;
 
-            set_rgb(rgb_data[COLOR_R_IDX], rgb_data[COLOR_G_IDX], rgb_data[COLOR_B_IDX], 
-                range > settings.settings_st.amp_max ? 100 : (100*range/settings.settings_st.amp_max));
-        } else {
-             set_rgb(rgb_data[COLOR_R_IDX], rgb_data[COLOR_G_IDX], rgb_data[COLOR_B_IDX], 100);
-        }
-        free(rgb_magnitudes);
+            if (ctrl_mode == audio_freq) {
+                set_rgb(rgb_data[COLOR_R_IDX], rgb_data[COLOR_G_IDX], rgb_data[COLOR_B_IDX], 100);   
+            } else {
+                set_rgb(rgb_data[COLOR_R_IDX], rgb_data[COLOR_G_IDX], rgb_data[COLOR_B_IDX], 
+                    range > settings.settings_st.amp_max ? 100 : (100*range/settings.settings_st.amp_max));   
+            }            
 
-        
+            free(rgb_magnitudes);
+        }
+  
 #if DEBUG_MIC_INPUT
         printf("Max magnitude:%lf at frequency:%lf Hz\n", mag_max, mag_max_freq);
         time_processing = (esp_timer_get_time() - time_processing) / 1000;

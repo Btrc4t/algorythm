@@ -16,6 +16,15 @@ ESP32 IOT appliance based on the CoAP protocol with rgb leds reacting to sound i
 * Microphone with amp: [Electret Microphone Amplifier - MAX9814 with Auto Gain Control](https://www.adafruit.com/product/1713) or similar. (Auto Gain not necessary)
 * 12V RGB Led band.
 
+### Functioning modes
+
+  * MANUAL: Has one color set manually
+  * AUDIO_INTENSITY: Color intensity varies with audio amplitude
+  * AUDIO_FREQ: Color changes with audio frequencies
+  * AUDIO: Color changes with audio frequencies and intensity varies with audio amplitude
+  * OFF: Leds will not light up
+  * AUDIO_HOLD: Color changes with audio frequencies and intensity varies with audio amplitude.  When amplitude is under the minimum, the last color set is shown.
+
 ### Configure the project
 
 ```
