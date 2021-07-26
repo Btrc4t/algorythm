@@ -5,6 +5,8 @@ Free / Libre open source IoT product based on ESP32, using CoAP for communicatio
 
 [![Algorythm Project Presentation](https://img.youtube.com/vi/iIuo6Bbvzmk/0.jpg)](https://www.youtube.com/watch?v=iIuo6Bbvzmk)
 
+You can download the android app's source code [here](https://codeberg.org/btrc4t/algorythm-app)
+
 ## Installing
 ![System Diagram](system_diagram.png "Algorythm System Diagram")
 ### Software Prerequisites
