@@ -511,13 +511,13 @@ void i2s_adc_audio_processing(void*arg)
 {
     i2s_config_t i2s_config = {
         .mode = I2S_MODE_MASTER | I2S_MODE_RX | I2S_MODE_ADC_BUILT_IN,
-        .sample_rate =  EXAMPLE_I2S_SAMPLE_RATE,
+        .sample_rate =  I2S_SAMPLE_RATE,
         .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
         .communication_format = I2S_COMM_FORMAT_STAND_MSB,
-        .channel_format = EXAMPLE_I2S_FORMAT,
+        .channel_format = I2S_FORMAT,
         .intr_alloc_flags = 0,
         .dma_buf_count = 2,
-        .dma_buf_len = (EXAMPLE_I2S_READ_LEN/2),
+        .dma_buf_len = (I2S_READ_LEN/2),
         .use_apll = 1,
     };
     // Install and start i2s driver
@@ -526,7 +526,7 @@ void i2s_adc_audio_processing(void*arg)
     i2s_set_adc_mode(I2S_ADC_UNIT, I2S_ADC_CHANNEL);
 
     size_t bytes_read;
-    int i2s_read_len = EXAMPLE_I2S_READ_LEN;
+    int i2s_read_len = I2S_READ_LEN;
 
     char* i2s_read_buff = (char*) calloc(i2s_read_len, sizeof(char));
     uint16_t* i2s_proc_buff;
@@ -539,8 +539,8 @@ void i2s_adc_audio_processing(void*arg)
 #endif
     short range = 0;
     int c, location_max = 0, location_min = 0;
-    FFTTransformer * transformer = create_fft_transformer((EXAMPLE_I2S_READ_LEN/2), FFT_SCALED_OUTPUT);
-    FFT_PRECISION * fft_input = (FFT_PRECISION *) malloc((EXAMPLE_I2S_READ_LEN/2)  * sizeof(FFT_PRECISION));
+    FFTTransformer * transformer = create_fft_transformer((I2S_READ_LEN/2), FFT_SCALED_OUTPUT);
+    FFT_PRECISION * fft_input = (FFT_PRECISION *) malloc((I2S_READ_LEN/2)  * sizeof(FFT_PRECISION));
     FFT_PRECISION * rgb_magnitudes;
     // Task loop
     for (;;) {
@@ -594,7 +594,7 @@ skip_it:    vTaskDelay(pdMS_TO_TICKS(10));
 #endif
         if (ctrl_mode == audio || ctrl_mode == audio_freq || ctrl_mode == audio_hold) {
             rgb_magnitudes = (FFT_PRECISION*)calloc(3, sizeof(FFT_PRECISION));
-            for(int i = 0; i < (EXAMPLE_I2S_READ_LEN/2); i += 1) {
+            for(int i = 0; i < (I2S_READ_LEN/2); i += 1) {
                 fft_input[i] = (i2s_proc_buff[i] - range) / (range/16);
             }
 
@@ -606,13 +606,13 @@ skip_it:    vTaskDelay(pdMS_TO_TICKS(10));
             mag_max_freq = 0;
 #endif
             // Process output
-            for(int i = 0; i < (EXAMPLE_I2S_READ_LEN/2); i += 2) {
-                uint16_t freq = 16 * i / 2 * EXAMPLE_I2S_SAMPLE_RATE / EXAMPLE_I2S_READ_LEN;
+            for(int i = 0; i < (I2S_READ_LEN/2); i += 2) {
+                uint16_t freq = 16 * i / 2 * I2S_SAMPLE_RATE / I2S_READ_LEN;
                 FFT_PRECISION cos_comp = fft_input[i];
                 FFT_PRECISION sin_comp = fft_input[i+1];
                 FFT_PRECISION mag = sqrt((cos_comp * cos_comp) + (sin_comp * sin_comp));
 #if DEBUG_MIC_INPUT
-                if (mag > mag_max && freq > 0 && freq < (EXAMPLE_I2S_SAMPLE_RATE/2)) {
+                if (mag > mag_max && freq > 0 && freq < (I2S_SAMPLE_RATE/2)) {
                     mag_max = mag;
                     mag_max_freq = freq;
                 }

@@ -1,7 +1,9 @@
 
 # Algorythm
 
-ESP32 IOT appliance based on the CoAP protocol with rgb leds reacting to sound input.
+Free / Libre open source IoT product based on ESP32, using CoAP for communication, powering a RGB LED band with changing colors at 60 Hz based on audio frequency and changing color intensity based on amplitude, using a microphone with audio sampling at 44.1 kHz
+
+[![Algorythm Project Presentation](https://img.youtube.com/vi/iIuo6Bbvzmk/0.jpg)](https://www.youtube.com/watch?v=iIuo6Bbvzmk)
 
 ## Installing
 ![System Diagram](system_diagram.png "Algorythm System Diagram")
@@ -33,8 +35,8 @@ idf.py menuconfig
 
 Algorythm Project Configuration  --->
  * If PSK enabled, Set CoAP Preshared Key to use in the connection to the server
- * Set WiFi SSID under Example Configuration
- * Set WiFi Password under Example Configuration
+ * Set WiFi SSID
+ * Set WiFi Password
  * Set the mDNS hostname for the board to use in the internal WiFi network
  * Set the mDNS instance name for the board to use in the internal WiFi network (this is best left as it is, the android application uses this string to identify nodes)
 
@@ -122,10 +124,4 @@ fetches `/.well-known/core`
 * You can debug the microphone input by changing ``DEBUG_MIC_INPUT`` to 1
 
 ## TODO
-* Configurable SSID & SSID password after deployment
-* Configurable CoAP PSK after deployment
-* Complete README
 * Setup CoAP DTLS only
-* Schematics
-* Video
-* Link to app

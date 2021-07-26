@@ -15,11 +15,11 @@
 /* Debug mic input values */
 #define DEBUG_MIC_INPUT   (0)
 /* I2S sample rate */
-#define EXAMPLE_I2S_SAMPLE_RATE   (44100)
+#define I2S_SAMPLE_RATE   (44100)
 /* I2S read buffer length */
-#define EXAMPLE_I2S_READ_LEN      (2048)
+#define I2S_READ_LEN      (2048)
 /* I2S data format */
-#define EXAMPLE_I2S_FORMAT        (I2S_CHANNEL_FMT_RIGHT_LEFT)
+#define I2S_FORMAT        (I2S_CHANNEL_FMT_RIGHT_LEFT)
 /* I2S built-in ADC unit */
 #define I2S_ADC_UNIT              ADC_UNIT_1
 /* I2S built-in ADC channel (GPIO 36 is VP pin) */
@@ -34,7 +34,7 @@
 #define GREEN_FREQ_END  (1100)
 #define RED_FREQ_START  GREEN_FREQ_END
 #define RED_FREQ_END  (3500)
-#define HOLD_MODE_INTENSITY (45)
+#define HOLD_MODE_INTENSITY (5)
 
 typedef struct rgb_mode_storage
 {
