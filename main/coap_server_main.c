@@ -66,22 +66,22 @@
    'make menuconfig'.
 
    If you'd rather not, just change the below entries to strings with
-   the config you want - ie #define EXAMPLE_COAP_PSK_KEY "some-agreed-preshared-key"
+   the config you want - ie #define COAP_PSK_KEY "some-agreed-preshared-key"
 
    Note: PSK will only be used if the URI is prefixed with coaps://
    instead of coap:// and the PSK must be one that the server supports
    (potentially associated with the IDENTITY)
 */
-#define COAP_PSK CONFIG_EXAMPLE_COAP_PSK_KEY
+#define COAP_PSK CONFIG_COAP_PSK_KEY
 
 /* The examples use CoAP Logging Level that
    you can set via 'make menuconfig'.
 
    If you'd rather not, just change the below entry to a value
    that is between 0 and 7 with
-   the config you want - ie #define EXAMPLE_COAP_LOG_DEFAULT_LEVEL 7
+   the config you want - ie #define COAP_LOG_DEFAULT_LEVEL 7
 */
-#define EXAMPLE_COAP_LOG_DEFAULT_LEVEL CONFIG_COAP_LOG_DEFAULT_LEVEL
+#define COAP_LOG_DEFAULT_LEVEL CONFIG_COAP_LOG_DEFAULT_LEVEL
 
 const static char *TAG = "LED mDNS CoAP_server";
 
@@ -212,7 +212,7 @@ static void coap_server(void *p)
     coap_address_t serv_addr;
     coap_resource_t *resource = NULL;
 
-    coap_set_log_level(EXAMPLE_COAP_LOG_DEFAULT_LEVEL);
+    coap_set_log_level(COAP_LOG_DEFAULT_LEVEL);
 
     while (1) {
         coap_endpoint_t *ep = NULL;

@@ -1,6 +1,6 @@
 menu "Algorythm Project Configuration"
 
-    config EXAMPLE_COAP_PSK_KEY
+    config COAP_PSK_KEY
         string "Preshared Key (PSK) to use in the connection from the CoAP client"
         depends on COAP_MBEDTLS_PSK
         default "secret-key"
@@ -22,7 +22,7 @@ menu "Algorythm Project Configuration"
 
     config ESP_MAXIMUM_RETRY
         int "Maximum retry"
-        default 5
+        default 100
         help
             Set the Maximum retry to avoid station reconnecting to the AP unlimited when the AP is really inexistent.
         
