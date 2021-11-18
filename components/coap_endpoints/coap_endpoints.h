@@ -1,12 +1,7 @@
 #ifndef COAP_ENDPOINTS_H
 #define COAP_ENDPOINTS_H
 
-#if 1
-/* Needed until coap_dtls.h becomes a part of libcoap */
-#include "libcoap.h"
-#include "coap_dtls.h"
-#endif
-#include "coap.h"
+#include "coap3/coap.h"
 #include "freertos/event_groups.h"
 
 #define INITIAL_DATA "Undefined"
@@ -62,27 +57,9 @@ typedef enum modes_enum control_mode;
 
 typedef struct handlers_t
 {
-  void (*get_handlers[endpoint_size]) (coap_context_t *ctx,
-                     coap_resource_t *resource,
-                     coap_session_t *session,
-                     coap_pdu_t *request,
-                     coap_binary_t *token,
-                     coap_string_t *query,
-                     coap_pdu_t *response);
-  void (*put_handlers[endpoint_size]) (coap_context_t *ctx,
-                     coap_resource_t *resource,
-                     coap_session_t *session,
-                     coap_pdu_t *request,
-                     coap_binary_t *token,
-                     coap_string_t *query,
-                     coap_pdu_t *response);
-  void (*del_handlers[endpoint_size]) (coap_context_t *ctx,
-                     coap_resource_t *resource,
-                     coap_session_t *session,
-                     coap_pdu_t *request,
-                     coap_binary_t *token,
-                     coap_string_t *query,
-                     coap_pdu_t *response);
+  coap_method_handler_t get_handlers[endpoint_size];
+  coap_method_handler_t put_handlers[endpoint_size];
+  coap_method_handler_t del_handlers[endpoint_size];
 } handlers_t;
 
 typedef struct settings_storage
@@ -122,87 +99,67 @@ void initialise_mdns(void);
 
 char* generate_hostname(void);
 
-void hnd_espressif_get_room(coap_context_t *ctx, coap_resource_t *resource,
-                  coap_session_t *session,
-                  coap_pdu_t *request, coap_binary_t *token,
+void hnd_espressif_get_room(coap_resource_t *resource,
+                  coap_session_t *session, coap_pdu_t *request,
                   coap_string_t *query, coap_pdu_t *response);
 
-void hnd_espressif_put_room(coap_context_t *ctx,
-                  coap_resource_t *resource,
+void hnd_espressif_put_room(coap_resource_t *resource,
                   coap_session_t *session,
                   coap_pdu_t *request,
-                  coap_binary_t *token,
                   coap_string_t *query,
                   coap_pdu_t *response);
 
-void hnd_espressif_delete_room(coap_context_t *ctx,
-                     coap_resource_t *resource,
+void hnd_espressif_delete_room(coap_resource_t *resource,
                      coap_session_t *session,
                      coap_pdu_t *request,
-                     coap_binary_t *token,
                      coap_string_t *query,
                      coap_pdu_t *response);
 
-void hnd_espressif_get_settings(coap_context_t *ctx, coap_resource_t *resource,
-                  coap_session_t *session,
-                  coap_pdu_t *request, coap_binary_t *token,
+void hnd_espressif_get_settings(coap_resource_t *resource,
+                  coap_session_t *session, coap_pdu_t *request,
                   coap_string_t *query, coap_pdu_t *response);
 
-void hnd_espressif_put_settings(coap_context_t *ctx,
-                  coap_resource_t *resource,
+void hnd_espressif_put_settings(coap_resource_t *resource,
                   coap_session_t *session,
                   coap_pdu_t *request,
-                  coap_binary_t *token,
                   coap_string_t *query,
                   coap_pdu_t *response);
 
-void hnd_espressif_delete_settings(coap_context_t *ctx,
-                     coap_resource_t *resource,
+void hnd_espressif_delete_settings(coap_resource_t *resource,
                      coap_session_t *session,
                      coap_pdu_t *request,
-                     coap_binary_t *token,
                      coap_string_t *query,
                      coap_pdu_t *response);
 
-void hnd_espressif_get_rgb(coap_context_t *ctx, coap_resource_t *resource,
-                  coap_session_t *session,
-                  coap_pdu_t *request, coap_binary_t *token,
+void hnd_espressif_get_rgb(coap_resource_t *resource,
+                  coap_session_t *session, coap_pdu_t *request,
                   coap_string_t *query, coap_pdu_t *response);
 
-void hnd_espressif_put_rgb(coap_context_t *ctx,
-                  coap_resource_t *resource,
+void hnd_espressif_put_rgb(coap_resource_t *resource,
                   coap_session_t *session,
                   coap_pdu_t *request,
-                  coap_binary_t *token,
                   coap_string_t *query,
                   coap_pdu_t *response);
 
-void hnd_espressif_delete_rgb(coap_context_t *ctx,
-                     coap_resource_t *resource,
+void hnd_espressif_delete_rgb(coap_resource_t *resource,
                      coap_session_t *session,
                      coap_pdu_t *request,
-                     coap_binary_t *token,
                      coap_string_t *query,
                      coap_pdu_t *response);
 
-void hnd_espressif_get_mode(coap_context_t *ctx, coap_resource_t *resource,
-                  coap_session_t *session,
-                  coap_pdu_t *request, coap_binary_t *token,
+void hnd_espressif_get_mode(coap_resource_t *resource,
+                  coap_session_t *session, coap_pdu_t *request,
                   coap_string_t *query, coap_pdu_t *response);
 
-void hnd_espressif_put_mode(coap_context_t *ctx,
-                  coap_resource_t *resource,
+void hnd_espressif_put_mode(coap_resource_t *resource,
                   coap_session_t *session,
                   coap_pdu_t *request,
-                  coap_binary_t *token,
                   coap_string_t *query,
                   coap_pdu_t *response);
 
-void hnd_espressif_delete_mode(coap_context_t *ctx,
-                     coap_resource_t *resource,
+void hnd_espressif_delete_mode(coap_resource_t *resource,
                      coap_session_t *session,
                      coap_pdu_t *request,
-                     coap_binary_t *token,
                      coap_string_t *query,
                      coap_pdu_t *response);
 

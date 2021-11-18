@@ -87,40 +87,37 @@ void set_endpoints_handlers(__attribute__((unused)) handlers_t *handlers) {
     };
 }
 
-void hnd_espressif_get_room(coap_context_t *ctx, coap_resource_t *resource,
-                  coap_session_t *session,
-                  coap_pdu_t *request, coap_binary_t *token,
+void hnd_espressif_get_room(coap_resource_t *resource,
+                  coap_session_t *session, coap_pdu_t *request, /* coap_binary_t *token, */
                   coap_string_t *query, coap_pdu_t *response)
 {
-    coap_add_data_blocked_response(resource, session, request, response, token,
+    coap_pdu_set_code(response, COAP_RESPONSE_CODE_CONTENT);
+    coap_add_data_blocked_response(request, response,
                                    COAP_MEDIATYPE_TEXT_PLAIN, 0,
                                    strlen(room_name)+1,
                                    (const u_char *)room_name);
+                                   
 }
 
-void hnd_espressif_put_room(coap_context_t *ctx,
-                  coap_resource_t *resource,
+void hnd_espressif_put_room(coap_resource_t *resource,
                   coap_session_t *session,
                   coap_pdu_t *request,
-                  coap_binary_t *token,
                   coap_string_t *query,
                   coap_pdu_t *response)
 {
     size_t size;
-    unsigned char *data;
+    const uint8_t *data;
 
     coap_resource_notify_observers(resource, NULL);
 
     if (strcmp (room_name, INITIAL_DATA) == 0) {
-        response->code = COAP_RESPONSE_CODE(201);
+        coap_pdu_set_code(response, COAP_RESPONSE_CODE_CREATED);
     } else {
-        response->code = COAP_RESPONSE_CODE(204);
+        coap_pdu_set_code(response, COAP_RESPONSE_CODE_CHANGED);
     }
 
     /* coap_get_data() sets size to 0 on error */
     (void)coap_get_data(request, &size, &data);
-    ESP_LOGI(TAG, "Got coap get request type:%d, code: %d, data: %s",
-                 request->type, request->code, request->data);
 
     if (size == 0) {      /* re-init */
         ESP_LOGI(TAG, "Room name at init is: %s",room_name);
@@ -136,49 +133,42 @@ void hnd_espressif_put_room(coap_context_t *ctx,
     }
 }
 
-void hnd_espressif_delete_room(coap_context_t *ctx,
-                     coap_resource_t *resource,
+void hnd_espressif_delete_room(coap_resource_t *resource,
                      coap_session_t *session,
                      coap_pdu_t *request,
-                     coap_binary_t *token,
                      coap_string_t *query,
                      coap_pdu_t *response)
 {
     coap_resource_notify_observers(resource, NULL);
     snprintf(room_name, strlen(room_name)+1, INITIAL_DATA);
     ESP_ERROR_CHECK( mdns_service_txt_item_set("_http", "_tcp", ENDPOINT_STRING[room], INITIAL_DATA) );
-    response->code = COAP_RESPONSE_CODE(202);
+    coap_pdu_set_code(response, COAP_RESPONSE_CODE_DELETED);
 }
 
-void hnd_espressif_get_settings(coap_context_t *ctx, coap_resource_t *resource,
-                  coap_session_t *session,
-                  coap_pdu_t *request, coap_binary_t *token,
+void hnd_espressif_get_settings(coap_resource_t *resource,
+                  coap_session_t *session, coap_pdu_t *request, /* coap_binary_t *token, */
                   coap_string_t *query, coap_pdu_t *response)
 {
-    coap_add_data_blocked_response(resource, session, request, response, token,
+    coap_pdu_set_code(response, COAP_RESPONSE_CODE_CONTENT);
+    coap_add_data_blocked_response(request, response,
                                    COAP_MEDIATYPE_TEXT_PLAIN, 0,
                                    sizeof(settings.settings_data),
                                    (const u_char *)settings.settings_data);
 }
-void hnd_espressif_put_settings(coap_context_t *ctx,
-                  coap_resource_t *resource,
+void hnd_espressif_put_settings(coap_resource_t *resource,
                   coap_session_t *session,
                   coap_pdu_t *request,
-                  coap_binary_t *token,
                   coap_string_t *query,
                   coap_pdu_t *response)
 {
     size_t size;
-    unsigned char *data;
-
+    const uint8_t *data;
     coap_resource_notify_observers(resource, NULL);
 
-    response->code = COAP_RESPONSE_CODE(204);
+    coap_pdu_set_code(response, COAP_RESPONSE_CODE_CHANGED);
 
     /* coap_get_data() sets size to 0 on error */
     (void)coap_get_data(request, &size, &data);
-    ESP_LOGI(TAG, "Got coap get request type:%d, code: %d, data: %s",
-                 request->type, request->code, request->data);
 
     if (size == sizeof(settings.settings_data)) {
         memcpy (settings.settings_data, data, size);
@@ -188,49 +178,43 @@ void hnd_espressif_put_settings(coap_context_t *ctx,
     }
 }
 
-void hnd_espressif_delete_settings(coap_context_t *ctx,
-                     coap_resource_t *resource,
+void hnd_espressif_delete_settings(coap_resource_t *resource,
                      coap_session_t *session,
                      coap_pdu_t *request,
-                     coap_binary_t *token,
                      coap_string_t *query,
                      coap_pdu_t *response)
 {
     coap_resource_notify_observers(resource, NULL);
     const uint8_t empty[12] = {0};
     memcpy(settings.settings_data, empty, sizeof(empty));
-    response->code = COAP_RESPONSE_CODE(202);
+    coap_pdu_set_code(response, COAP_RESPONSE_CODE_DELETED);
 }
 
-void hnd_espressif_get_rgb(coap_context_t *ctx, coap_resource_t *resource,
-                  coap_session_t *session,
-                  coap_pdu_t *request, coap_binary_t *token,
+void hnd_espressif_get_rgb(coap_resource_t *resource,
+                  coap_session_t *session, coap_pdu_t *request, /* coap_binary_t *token, */
                   coap_string_t *query, coap_pdu_t *response)
 {
-    coap_add_data_blocked_response(resource, session, request, response, token,
+    coap_pdu_set_code(response, COAP_RESPONSE_CODE_CONTENT);
+    coap_add_data_blocked_response(request, response,
                                    COAP_MEDIATYPE_APPLICATION_OCTET_STREAM, 0,
                                    sizeof(rgb_data),
                                    (const u_char *)rgb_data);
 }
-void hnd_espressif_put_rgb(coap_context_t *ctx,
-                  coap_resource_t *resource,
+void hnd_espressif_put_rgb(coap_resource_t *resource,
                   coap_session_t *session,
                   coap_pdu_t *request,
-                  coap_binary_t *token,
                   coap_string_t *query,
                   coap_pdu_t *response)
 {
     size_t size;
-    unsigned char *data;
+    const uint8_t *data;
 
     coap_resource_notify_observers(resource, NULL);
 
-    response->code = COAP_RESPONSE_CODE(204);
+    coap_pdu_set_code(response, COAP_RESPONSE_CODE_CHANGED);
 
     /* coap_get_data() sets size to 0 on error */
     (void)coap_get_data(request, &size, &data);
-    ESP_LOGI(TAG, "Got coap get request type:%d, code: %d, data: %s",
-                 request->type, request->code, request->data);
 
     if (ctrl_mode != manual && ctrl_mode != audio_intensity) {
         ESP_LOGE(TAG, "Cannot set RGB value when not in manual or audio_intensity modes");
@@ -242,55 +226,49 @@ void hnd_espressif_put_rgb(coap_context_t *ctx,
     }
 }
 
-void hnd_espressif_delete_rgb(coap_context_t *ctx,
-                     coap_resource_t *resource,
+void hnd_espressif_delete_rgb(coap_resource_t *resource,
                      coap_session_t *session,
                      coap_pdu_t *request,
-                     coap_binary_t *token,
                      coap_string_t *query,
                      coap_pdu_t *response)
 {
     coap_resource_notify_observers(resource, NULL);
     const uint8_t empty[3] = {0};
     memcpy(rgb_data, empty, sizeof(empty));
-    response->code = COAP_RESPONSE_CODE(202);
+    coap_pdu_set_code(response, COAP_RESPONSE_CODE_DELETED);
 }
 
-void hnd_espressif_get_mode(coap_context_t *ctx, coap_resource_t *resource,
-                  coap_session_t *session,
-                  coap_pdu_t *request, coap_binary_t *token,
+void hnd_espressif_get_mode(coap_resource_t *resource,
+                  coap_session_t *session, coap_pdu_t *request, 
                   coap_string_t *query, coap_pdu_t *response)
 {
+    coap_pdu_set_code(response, COAP_RESPONSE_CODE_CONTENT);
     uint8_t ctrl_mode_value[] = {(uint8_t) ctrl_mode};
-    coap_add_data_blocked_response(resource, session, request, response, token,
+    coap_add_data_blocked_response(request, response,
                                    COAP_MEDIATYPE_APPLICATION_OCTET_STREAM, 0,
                                    (size_t)1,
                                    (const u_char *)ctrl_mode_value);
 }
 
-void hnd_espressif_put_mode(coap_context_t *ctx,
-                  coap_resource_t *resource,
+void hnd_espressif_put_mode(coap_resource_t *resource,
                   coap_session_t *session,
                   coap_pdu_t *request,
-                  coap_binary_t *token,
                   coap_string_t *query,
                   coap_pdu_t *response)
 {
     size_t size;
-    unsigned char *data;
+    const uint8_t *data;
 
     coap_resource_notify_observers(resource, NULL);
 
     if (strcmp (room_name, INITIAL_DATA) == 0) {
-        response->code = COAP_RESPONSE_CODE(201);
+        coap_pdu_set_code(response, COAP_RESPONSE_CODE_CREATED);
     } else {
-        response->code = COAP_RESPONSE_CODE(204);
+        coap_pdu_set_code(response, COAP_RESPONSE_CODE_CHANGED);
     }
 
     /* coap_get_data() sets size to 0 on error */
     (void)coap_get_data(request, &size, &data);
-    ESP_LOGI(TAG, "Got coap get request type:%d, code: %d, data: %s",
-                 request->type, request->code, request->data);
 
     if (size == 1 && data[0] < modes_size) {      /* re-init */
         ctrl_mode = data[0];
@@ -306,18 +284,16 @@ void hnd_espressif_put_mode(coap_context_t *ctx,
     }
 }
 
-void hnd_espressif_delete_mode(coap_context_t *ctx,
-                     coap_resource_t *resource,
+void hnd_espressif_delete_mode(coap_resource_t *resource,
                      coap_session_t *session,
                      coap_pdu_t *request,
-                     coap_binary_t *token,
                      coap_string_t *query,
                      coap_pdu_t *response)
 {
     coap_resource_notify_observers(resource, NULL);
     snprintf(ctrl_text, strlen(ctrl_text)+1, MODE_STRING[manual]);
     ctrl_mode = manual;
-    response->code = COAP_RESPONSE_CODE(202);
+    coap_pdu_set_code(response, COAP_RESPONSE_CODE_DELETED);
 }
 
 int verify_cn_callback(const char *cn,

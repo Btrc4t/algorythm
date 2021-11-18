@@ -5,7 +5,7 @@
 #include "freertos/event_groups.h"
 
 const static char *TAG = "RGB Leds";
-static uint8_t rgba_last[] = {0};
+static uint8_t rgba_last[4] = {0};
 
 void set_rgb(uint8_t red, uint8_t green, uint8_t blue, uint8_t intensity) {
     if (intensity > 100) return; 
@@ -21,7 +21,7 @@ void set_rgb(uint8_t red, uint8_t green, uint8_t blue, uint8_t intensity) {
             rgba_last[1] = green;
             rgba_last[2] = blue;
             rgba_last[3] = intensity;
-        }        
+        }
     }
     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, intensity*red/255);
     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, intensity*green/255);

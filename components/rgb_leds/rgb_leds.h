@@ -11,6 +11,7 @@
 #define COLOR_R_IDX 0
 #define COLOR_G_IDX 1
 #define COLOR_B_IDX 2
+#define COLOR_A_IDX 3
 
 /* Debug mic input values */
 #define DEBUG_MIC_INPUT   (0)

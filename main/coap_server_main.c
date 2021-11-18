@@ -344,7 +344,7 @@ static void coap_server(void *p)
 
         wait_ms = COAP_RESOURCE_CHECK_TIME * 1000;
         while (1) {
-            int result = coap_run_once(ctx, wait_ms);
+            int result = coap_io_process(ctx, wait_ms);
             if (result < 0) {
                 break;
             } else if (result && (unsigned)result < wait_ms) {
@@ -551,6 +551,7 @@ skip_it:    vTaskDelay(pdMS_TO_TICKS(10));
         }
 #if DEBUG_MIC_INPUT
         ESP_LOGI(TAG,"Color mode %d", ctrl_mode);
+        int64_t time_processing;
         time_processing = esp_timer_get_time();
 #endif
         i2s_read(I2S_NUM_0, (void*) i2s_read_buff, i2s_read_len, &bytes_read, portMAX_DELAY);
