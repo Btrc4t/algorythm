@@ -175,7 +175,7 @@ void wifi_init_sta(void)
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config) );
     ESP_ERROR_CHECK(esp_wifi_start() );
 
-    const char* hostname = generate_hostname();
+    const char* hostname = generate_name(LEDS_MDNS_HOSTNAME);
     ESP_ERROR_CHECK(tcpip_adapter_set_hostname(TCPIP_ADAPTER_IF_STA , hostname));
 
     ESP_LOGI(TAG, "wifi_init_sta finished.");
@@ -384,7 +384,7 @@ void nvs_storage_daemon(void *arg)
         
         /* Read Color Data and Color Mode */
         // Value will default to 0, if not set yet in NVS
-        err = nvs_get_i32(handle, "color_storage", &color_storage.all);
+        err = nvs_get_i32(handle, "clst", &color_storage.all);
         switch (err) {
             case ESP_OK:
                 ESP_LOGI(TAG, "Read color successfuly\n");
@@ -406,13 +406,13 @@ void nvs_storage_daemon(void *arg)
         // Read and check required size
         size_t required_size;
         // This call sets required size
-        nvs_get_blob(handle, "settings_storage", NULL, &required_size);
+        nvs_get_blob(handle, "setts", NULL, &required_size);
         if (required_size != sizeof(settings.settings_data)) {
-            ESP_LOGE(TAG,"Invalid length for settings_storage: %d, correct len: %d",required_size, sizeof(settings.settings_data));
+            ESP_LOGE(TAG,"Invalid length for setts: %d, correct len: %d",required_size, sizeof(settings.settings_data));
             err = ESP_ERR_NVS_NOT_FOUND;
         } else {
             // This call reads the string
-            err = nvs_get_blob(handle, "settings_storage", settings.settings_data, &required_size);
+            err = nvs_get_blob(handle, "setts", settings.settings_data, &required_size);
         }
 
         switch (err) {
@@ -435,13 +435,13 @@ void nvs_storage_daemon(void *arg)
         
         /* Read Room Name */
         // This call sets required size
-        nvs_get_str(handle, "name_storage", NULL, &required_size);
+        nvs_get_str(handle, "nm_st", NULL, &required_size);
         if (required_size > MAX_LEN_ROOM_NAME) {
             ESP_LOGE(TAG,"Invalid length for name storage");
             err = ESP_ERR_NVS_NOT_FOUND;
         } else {
             // This call reads the string
-            err = nvs_get_str(handle, "name_storage", room_name, &required_size);
+            err = nvs_get_str(handle, "nm_st", room_name, &required_size);
         }
         
         switch (err) {
@@ -480,20 +480,26 @@ void nvs_storage_daemon(void *arg)
             if (xbit & (E_RGB_BIT | E_MODE_BIT)) {
                 // Write
                 ESP_LOGI(TAG, "Updating color + mode values in NVS ... ");
-                err = nvs_set_i32(handle, "color_storage", color_storage.all);
+                err = nvs_set_i32(handle, "clst", color_storage.all);
                 ESP_LOGI(TAG, "%s", ((err != ESP_OK) ? "Failed!\n" : "Done\n"));
             }
             
             if (xbit & E_NAME_BIT) {
                 ESP_LOGI(TAG, "Updating room name string in NVS ... ");
-                err = nvs_set_str(handle, "name_storage", room_name);
+                err = nvs_set_str(handle, "nm_st", room_name);
                 ESP_LOGI(TAG, "%s", ((err != ESP_OK) ? "Failed!\n" : "Done\n"));
             }
 
             if (xbit & E_PREF_BIT) {
-                ESP_LOGI(TAG, "Updating settings in NVS ... ");
-                err = nvs_set_blob(handle, "settings_storage", settings.settings_data, sizeof(settings.settings_data));
-                ESP_LOGI(TAG, "%s", ((err != ESP_OK) ? "Failed!\n" : "Done\n"));
+                const uint8_t *settingsData = settings.settings_data;
+                size_t len = sizeof(settings.settings_data);
+                ESP_LOGI(TAG, "Updating settings in NVS ... bytes: %d",len);
+                err = nvs_set_blob(handle, "setts", &settingsData, len);
+                if (err != ESP_OK) {
+                    ESP_LOGI(TAG, "Failed with err %x\n", err);
+                } else {
+                    ESP_LOGI(TAG, "Done\n");
+                }
             }
 
             ESP_LOGI(TAG, "Committing updates in NVS ... ");
@@ -550,8 +556,6 @@ skip_it:    vTaskDelay(pdMS_TO_TICKS(10));
             continue;
         }
 #if DEBUG_MIC_INPUT
-        ESP_LOGI(TAG,"Color mode %d", ctrl_mode);
-        int64_t time_processing;
         time_processing = esp_timer_get_time();
 #endif
         i2s_read(I2S_NUM_0, (void*) i2s_read_buff, i2s_read_len, &bytes_read, portMAX_DELAY);

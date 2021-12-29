@@ -97,70 +97,70 @@ void set_endpoints_handlers(__attribute__((unused)) handlers_t *handlers);
 
 void initialise_mdns(void);
 
-char* generate_hostname(void);
+char* generate_name(char *prefix);
 
 void hnd_espressif_get_room(coap_resource_t *resource,
-                  coap_session_t *session, coap_pdu_t *request,
-                  coap_string_t *query, coap_pdu_t *response);
+                  coap_session_t *session, const coap_pdu_t *request,
+                  const coap_string_t *query, coap_pdu_t *response);
 
 void hnd_espressif_put_room(coap_resource_t *resource,
                   coap_session_t *session,
-                  coap_pdu_t *request,
-                  coap_string_t *query,
+                  const coap_pdu_t *request,
+                  const coap_string_t *query,
                   coap_pdu_t *response);
 
 void hnd_espressif_delete_room(coap_resource_t *resource,
                      coap_session_t *session,
-                     coap_pdu_t *request,
-                     coap_string_t *query,
+                     const coap_pdu_t *request,
+                     const coap_string_t *query,
                      coap_pdu_t *response);
 
 void hnd_espressif_get_settings(coap_resource_t *resource,
-                  coap_session_t *session, coap_pdu_t *request,
-                  coap_string_t *query, coap_pdu_t *response);
+                  coap_session_t *session, const coap_pdu_t *request,
+                  const coap_string_t *query, coap_pdu_t *response);
 
 void hnd_espressif_put_settings(coap_resource_t *resource,
                   coap_session_t *session,
-                  coap_pdu_t *request,
-                  coap_string_t *query,
+                  const coap_pdu_t *request,
+                  const coap_string_t *query,
                   coap_pdu_t *response);
 
 void hnd_espressif_delete_settings(coap_resource_t *resource,
                      coap_session_t *session,
-                     coap_pdu_t *request,
-                     coap_string_t *query,
+                     const coap_pdu_t *request,
+                     const coap_string_t *query,
                      coap_pdu_t *response);
 
 void hnd_espressif_get_rgb(coap_resource_t *resource,
-                  coap_session_t *session, coap_pdu_t *request,
-                  coap_string_t *query, coap_pdu_t *response);
+                  coap_session_t *session, const coap_pdu_t *request,
+                  const coap_string_t *query, coap_pdu_t *response);
 
 void hnd_espressif_put_rgb(coap_resource_t *resource,
                   coap_session_t *session,
-                  coap_pdu_t *request,
-                  coap_string_t *query,
+                  const coap_pdu_t *request,
+                  const coap_string_t *query,
                   coap_pdu_t *response);
 
 void hnd_espressif_delete_rgb(coap_resource_t *resource,
                      coap_session_t *session,
-                     coap_pdu_t *request,
-                     coap_string_t *query,
+                     const coap_pdu_t *request,
+                     const coap_string_t *query,
                      coap_pdu_t *response);
 
 void hnd_espressif_get_mode(coap_resource_t *resource,
-                  coap_session_t *session, coap_pdu_t *request,
-                  coap_string_t *query, coap_pdu_t *response);
+                  coap_session_t *session, const coap_pdu_t *request,
+                  const coap_string_t *query, coap_pdu_t *response);
 
 void hnd_espressif_put_mode(coap_resource_t *resource,
                   coap_session_t *session,
-                  coap_pdu_t *request,
-                  coap_string_t *query,
+                  const coap_pdu_t *request,
+                  const coap_string_t *query,
                   coap_pdu_t *response);
 
 void hnd_espressif_delete_mode(coap_resource_t *resource,
                      coap_session_t *session,
-                     coap_pdu_t *request,
-                     coap_string_t *query,
+                     const coap_pdu_t *request,
+                     const coap_string_t *query,
                      coap_pdu_t *response);
 
 int verify_cn_callback(const char *cn,
