@@ -126,4 +126,11 @@ fetches `/.well-known/core`
 * You can debug the microphone input by changing ``DEBUG_MIC_INPUT`` to 1
 
 ## TODO
-* Setup CoAP DTLS only
+
+* Bring up to date (latest esp-idf)
+* Make it [Home Assistant](https://www.home-assistant.io/) compatible, integrating MQTT and supporting the `mqtt light` schema
+* Additionally support purpose-built espressif audio devkit (just DIY esp32 now, ESP32-A1S planned as it's owned)
+* Add bluetooth for comms
+* Fix a bug causing wifi disconnection after a long runtime (might be related to router leases, will investigate via openwrt)
+* Add OpenRGB plugin
+* Setup CoAP DTLS
